@@ -13,6 +13,9 @@ class Task(db.Model):
     title = db.Column(db.String(100), nullable=False)
     status = db.Column(db.String(20), default='Pending')
 
+with app.app_context():
+    db.create_all()
+
 @app.route('/')
 def index():
     tasks = Task.query.all()
@@ -46,6 +49,4 @@ def delete_task(id):
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True)
