@@ -2,14 +2,96 @@
 <html>
 <head>
     <title>Add Task</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #2e7d32;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        input[type="text"] {
+            padding: 14px 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+        input[type="text"]::placeholder {
+            color: #8590a2;
+        }
+        button {
+            padding: 14px 24px;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #1b5e20;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.4);
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #2e7d32;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .back-link:hover {
+            color: #1b5e20;
+        }
+    </style>
 </head>
 <body>
-    <h1>Add Task</h1>
-    <form method="POST">
-        <input type="text" name="title" placeholder="Enter task title" required>
-        <button type="submit">Save</button>
-    </form>
-    <br>
-    <a href="/">Back</a>
+    <div class="container">
+        <h1>➕ Add New Task</h1>
+        <form method="POST">
+            <input type="text" name="title" placeholder="What needs to be done?" required autofocus>
+            <button type="submit">Create Task</button>
+        </form>
+        <a href="/" class="back-link">← Back to Tasks</a>
+    </div>
 </body>
 </html>

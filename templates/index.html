@@ -2,20 +2,267 @@
 <html>
 <head>
     <title>Task Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .header {
+            max-width: 1400px;
+            margin: 0 auto 40px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px 40px;
+        }
+        h1 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            font-size: 32px;
+            font-weight: 600;
+        }
+        .add-btn {
+            display: inline-block;
+            background: #2e7d32;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .add-btn:hover {
+            background: #1b5e20;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.4);
+            transform: translateY(-2px);
+        }
+        .board {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+        .column {
+            background: #f5f6f7;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+        .column-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid;
+        }
+        .column-title {
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: capitalize;
+        }
+        .column-count {
+            margin-left: auto;
+            background: #e1e8ed;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #172b4d;
+        }
+        .pending .column-header {
+            border-color: #ffc107;
+        }
+        .pending .column-title {
+            color: #f57f17;
+        }
+        .in-progress .column-header {
+            border-color: #2196f3;
+        }
+        .in-progress .column-title {
+            color: #1565c0;
+        }
+        .done .column-header {
+            border-color: #4caf50;
+        }
+        .done .column-title {
+            color: #2e7d32;
+        }
+        .tasks-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+        }
+        .task-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid;
+        }
+        .pending .task-card {
+            border-left-color: #ffc107;
+        }
+        .in-progress .task-card {
+            border-left-color: #2196f3;
+        }
+        .done .task-card {
+            border-left-color: #4caf50;
+        }
+        .task-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+        .task-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #172b4d;
+            margin-bottom: 12px;
+            word-wrap: break-word;
+        }
+        .task-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .task-actions a {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .edit-btn {
+            background: #2e7d32;
+            color: white;
+        }
+        .edit-btn:hover {
+            background: #1b5e20;
+        }
+        .delete-btn {
+            background: #ae2a19;
+            color: white;
+        }
+        .delete-btn:hover {
+            background: #8b2217;
+        }
+        .empty-column {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8590a2;
+            font-size: 14px;
+            text-align: center;
+        }
+        .tasks-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .tasks-container::-webkit-scrollbar-track {
+            background: #e1e8ed;
+            border-radius: 10px;
+        }
+        .tasks-container::-webkit-scrollbar-thumb {
+            background: #8590a2;
+            border-radius: 10px;
+        }
+        .tasks-container::-webkit-scrollbar-thumb:hover {
+            background: #626f86;
+        }
+    </style>
 </head>
 <body>
-    <h1>Task Manager</h1>
-    <a href="/add">Add Task</a>
-    <hr>
+    <div class="header">
+        <h1>📋 Task Manager</h1>
+        <a href="/add" class="add-btn">+ Add Task</a>
+    </div>
+    
+    <div class="board">
+        <!-- Pending Column -->
+        <div class="column pending">
+            <div class="column-header">
+                <div class="column-title">📝 Pending</div>
+                <div class="column-count">{{ tasks|selectattr('status', 'equalto', 'pending')|list|length }}</div>
+            </div>
+            <div class="tasks-container">
+                {% set pending_tasks = tasks|selectattr('status', 'equalto', 'pending')|list %}
+                {% if pending_tasks %}
+                    {% for task in pending_tasks %}
+                        <div class="task-card">
+                            <div class="task-title">{{ task.title }}</div>
+                            <div class="task-actions">
+                                <a href="/edit/{{ task.id }}" class="edit-btn">Edit</a>
+                                <a href="/delete/{{ task.id }}" class="delete-btn">Delete</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-column">No pending tasks</div>
+                {% endif %}
+            </div>
+        </div>
 
-    {% for task in tasks %}
-        <p>
-            <b>{{ task.title }}</b> - {{ task.status }}
-            <a href="/edit/{{ task.id }}">Edit</a>
-            <a href="/delete/{{ task.id }}">Delete</a>
-        </p>
-    {% else %}
-        <p>No tasks yet.</p>
-    {% endfor %}
+        <!-- In Progress Column -->
+        <div class="column in-progress">
+            <div class="column-header">
+                <div class="column-title">⚡ In Progress</div>
+                <div class="column-count">{{ tasks|selectattr('status', 'equalto', 'in progress')|list|length }}</div>
+            </div>
+            <div class="tasks-container">
+                {% set in_progress_tasks = tasks|selectattr('status', 'equalto', 'in progress')|list %}
+                {% if in_progress_tasks %}
+                    {% for task in in_progress_tasks %}
+                        <div class="task-card">
+                            <div class="task-title">{{ task.title }}</div>
+                            <div class="task-actions">
+                                <a href="/edit/{{ task.id }}" class="edit-btn">Edit</a>
+                                <a href="/delete/{{ task.id }}" class="delete-btn">Delete</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-column">No tasks in progress</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Done Column -->
+        <div class="column done">
+            <div class="column-header">
+                <div class="column-title">✅ Done</div>
+                <div class="column-count">{{ tasks|selectattr('status', 'equalto', 'done')|list|length }}</div>
+            </div>
+            <div class="tasks-container">
+                {% set done_tasks = tasks|selectattr('status', 'equalto', 'done')|list %}
+                {% if done_tasks %}
+                    {% for task in done_tasks %}
+                        <div class="task-card">
+                            <div class="task-title">{{ task.title }}</div>
+                            <div class="task-actions">
+                                <a href="/edit/{{ task.id }}" class="edit-btn">Edit</a>
+                                <a href="/delete/{{ task.id }}" class="delete-btn">Delete</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-column">No completed tasks</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </body>
 </html>
